@@ -1,30 +1,32 @@
-#include <iostream>
-#include <string>
+#include <cstring>
+#include <vector>
 #include "splay_tree.h"
 
 using namespace std;
 
+
 int main() {
-    cout << "Simple splay tree demo" << endl;
+    cout << "Simple integer splay tree demo" << endl;
 
     string command;
     int key;
     SplayTree<int>* splay_tree = new SplayTree<int>(); 
     
+    cout << "Use: \"insert [key]\", \"delete [key]\" or \"print\"" << endl;
     while (true) {
-        cin >> command >> key;
-        if (command.compare("insert")) {
+        cin >> command;
+        if (command.compare(string("insert")) == 0) {
+            cin >> key;
             splay_tree->insert(key);
-        } else if (command.compare("delete")) {
+        } else if (command.compare(string("delete")) == 0) {
+            cin >> key;
             splay_tree->remove(key);
-        } else if (command.compare("print")) {
-            splay_tree->in_order();
+        } else if (command.compare(string("print")) == 0) {
+            cout << splay_tree->print() << endl;
         } else {
-            cout << "Wrong input. Use: \"insert [key]\", \"delete [key]\" or \"print\"";
+            cout << "Wrong input. Use: \"insert [key]\", \"delete [key]\" or \"print\"" << endl;
         }
     }
-
-
 
     return 0;
 }
