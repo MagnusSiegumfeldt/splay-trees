@@ -70,18 +70,18 @@ void SplayTree<T>::splay(Node<T>* node) {
                 rotate_right(node); 
             }
         } else if (node->parent->is_left_child()) { 
-            if (node->is_left_child()) {
+            if (node->is_left_child()) { // Zig-Zig
                 rotate_right(node->parent);
                 rotate_right(node);
-            } else if (node->is_right_child()) {
+            } else if (node->is_right_child()) { // Zag-Zig
                 rotate_left(node);
                 rotate_right(node);
             }
         } else if (node->parent->is_right_child()) { 
-            if (node->is_right_child()) { 
+            if (node->is_right_child()) { // Zag-Zag
                 rotate_left(node->parent);
                 rotate_left(node);
-            } else if (node->is_left_child()) {
+            } else if (node->is_left_child()) { // Zig-Zag
                 rotate_right(node);
                 rotate_left(node);
             }
@@ -208,12 +208,9 @@ std::string SplayTree<T>::print() {
 template <class T>
 std::string SplayTree<T>::print_helper(Node<T> *node, std::string prefix, bool is_right) {
     std::string res;
-    //if( node != nullptr){
     res += prefix;
     res += (is_right ? "|---" : "L---" );
     
-
-        // print the value of the node
     if (node) {
         res += std::to_string(node->data) + "\n";
     } else {
@@ -221,11 +218,7 @@ std::string SplayTree<T>::print_helper(Node<T> *node, std::string prefix, bool i
         return res;
     }
 
-        // enter the next tree level - left and right branch
-    //if (node->left)
     res += print_helper(node->right, prefix + (is_right ? "|   " : "    "), true);
-    //if (node->right)
     res += print_helper(node->left, prefix + (is_right ? "|   " : "    "), false);
-    //}
     return res;
 }
