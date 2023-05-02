@@ -4,15 +4,19 @@
 #include <tuple>
 #include <vector>
 #include <string>
+#include <memory>
 
 
 template <class T>
 class Node {
     public: 
     T data;
-    Node<T>* parent = nullptr;
-    Node<T>* left = nullptr;
-    Node<T>* right = nullptr;
+    // Node<T>* parent = nullptr;
+    // Node<T>* left = nullptr;
+    // Node<T>* right = nullptr;
+    std::shared_ptr<Node<T>> parent;
+    std::shared_ptr<Node<T>> left;
+    std::shared_ptr<Node<T>> right;
 
     Node<T>(T);
     bool is_left_child();
@@ -21,21 +25,22 @@ class Node {
 
 template <class T>
 class SplayTree {
-    Node<T>* root = nullptr;
+    std::shared_ptr<Node<T>> root = nullptr;
 
 
-    void rotate_left(Node<T>*);
-    void rotate_right(Node<T>*);
-    void splay(Node<T>*);
-    Node<T>* get_maximum(Node<T>*);
-    
-    std::string print_helper(Node<T>*, std::string, bool);
+    void rotate_left(std::shared_ptr<Node<T>>);
+    void rotate_right(std::shared_ptr<Node<T>>);
+    void splay(std::shared_ptr<Node<T>>);
+    std::shared_ptr<Node<T>> get_maximum(std::shared_ptr<Node<T>>);    
+
+
+    std::string print_helper(std::shared_ptr<Node<T>>, std::string, bool);
 
 
     public:
-    Node<T>* search(T);
-    void insert(T);
-    void remove(T);
+    std::shared_ptr<Node<T>> search(T);
+    bool insert(T);
+    bool remove(T);
 
     std::vector<T> in_order();    
     std::string print();

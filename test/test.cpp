@@ -8,7 +8,7 @@
 // Test that numbers appear in sorted order when traversing inorder.
 TEST_CASE("Search tree invariant") {
 
-    SplayTree<int>* splay_tree = new SplayTree<int>();
+    SplayTree<int> splay_tree = SplayTree<int>();
 
     int size = 200;
     int elems[200];
@@ -19,10 +19,10 @@ TEST_CASE("Search tree invariant") {
 
     SECTION("Insertions") {
         for (int i = 0; i < size; i++) {
-            splay_tree->insert(elems[i]);
+            splay_tree.insert(elems[i]);
         }
 
-        std::vector<int> in_order = splay_tree->in_order();
+        std::vector<int> in_order = splay_tree.in_order();
         REQUIRE(in_order.size() == size);
 
         for (int i = 0; i < in_order.size(); i++) {
@@ -36,17 +36,17 @@ TEST_CASE("Search tree invariant") {
         int parts = 16;
         for (int j = 0; j < parts; j++) {
             for (int i = size * j / parts; i < size * (j + 1) / parts; i++) {
-                splay_tree->insert(elems[i]);
+                splay_tree.insert(elems[i]);
                 inserted.push_back(elems[i]);
                 
             }
             for (int i = size * j / parts; i < size * (j + 1) / parts; i += 4) {
-                splay_tree->remove(elems[i]);
+                splay_tree.remove(elems[i]);
                 inserted.erase(std::remove(inserted.begin(), inserted.end(), elems[i]), inserted.end());
                 removed++;
             }
         }
-        std::vector<int> in_order = splay_tree->in_order();
+        std::vector<int> in_order = splay_tree.in_order();
         std::sort(inserted.begin(), inserted.end());
         REQUIRE(in_order.size() == size - removed);
         REQUIRE(in_order.size() == inserted.size());
@@ -79,7 +79,7 @@ class CustomData {
 
 TEST_CASE("Custom data") {
 
-    SplayTree<CustomData>* splay_tree = new SplayTree<CustomData>();
+    SplayTree<CustomData> splay_tree = SplayTree<CustomData>();
 
     int size = 200;
     int elems[200];
@@ -90,10 +90,10 @@ TEST_CASE("Custom data") {
 
     SECTION("Insertions") {
         for (int i = 0; i < size; i++) {
-            splay_tree->insert(CustomData(elems[i], 10));
+            splay_tree.insert(CustomData(elems[i], 10));
         }
 
-        std::vector<CustomData> in_order = splay_tree->in_order();
+        std::vector<CustomData> in_order = splay_tree.in_order();
         REQUIRE(in_order.size() == size);
 
         for (int i = 0; i < in_order.size(); i++) {
@@ -108,17 +108,17 @@ TEST_CASE("Custom data") {
         int parts = 16;
         for (int j = 0; j < parts; j++) {
             for (int i = size * j / parts; i < size * (j + 1) / parts; i++) {
-                splay_tree->insert(CustomData(elems[i], 10));
+                splay_tree.insert(CustomData(elems[i], 10));
                 inserted.push_back(elems[i]);
                 
             }
             for (int i = size * j / parts; i < size * (j + 1) / parts; i += 4) {
-                splay_tree->remove(CustomData(elems[i], 10));
+                splay_tree.remove(CustomData(elems[i], 10));
                 inserted.erase(std::remove(inserted.begin(), inserted.end(), elems[i]), inserted.end());
                 removed++;
             }
         }
-        std::vector<CustomData> in_order = splay_tree->in_order();
+        std::vector<CustomData> in_order = splay_tree.in_order();
         std::sort(inserted.begin(), inserted.end());
         REQUIRE(in_order.size() == size - removed);
         REQUIRE(in_order.size() == inserted.size());

@@ -11,19 +11,19 @@ template <class T>
 bool Node<T>::is_left_child() {
     if (!this->parent)
         return false;
-    return parent->left == this;
+    return parent->left.get() == this;
 }
 template <class T>
 bool Node<T>::is_right_child() {
     if (!this->parent)
         return false;
-    return parent->right == this;
+    return parent->right.get() == this;
 }
 
 template <class T>
-void SplayTree<T>::rotate_right(Node<T>* x) {
-    Node<T>* y = x->parent;
-    Node<T>* z = y->parent;
+void SplayTree<T>::rotate_right(std::shared_ptr<Node<T>> x) {
+    std::shared_ptr<Node<T>> y = x->parent;
+    std::shared_ptr<Node<T>> z = y->parent;
 
     if (z) {
         if (y->is_left_child()) {
@@ -41,9 +41,9 @@ void SplayTree<T>::rotate_right(Node<T>* x) {
 }
 
 template <class T>
-void SplayTree<T>::rotate_left(Node<T>* x) {
-    Node<T>* y = x->parent;
-    Node<T>* z = y->parent;
+void SplayTree<T>::rotate_left(std::shared_ptr<Node<T>> x) {
+    std::shared_ptr<Node<T>> y = x->parent;
+    std::shared_ptr<Node<T>> z = y->parent;
 
     if (z) {
         if (y->is_left_child()) {
@@ -61,7 +61,7 @@ void SplayTree<T>::rotate_left(Node<T>* x) {
 }
 
 template <class T>
-void SplayTree<T>::splay(Node<T>* node) {
+void SplayTree<T>::splay(std::shared_ptr<Node<T>> node) {
     while (node->parent) {
         if (!node->parent->parent) {
             if (node->is_right_child()) { // Zag
@@ -92,7 +92,7 @@ void SplayTree<T>::splay(Node<T>* node) {
 
 
 template <class T>
-Node<T>* SplayTree<T>::get_maximum(Node<T>* node) {
+std::shared_ptr<Node<T>> SplayTree<T>::get_maximum(std::shared_ptr<Node<T>> node) {
     while (node->right) {
         node = node->right;
     }
@@ -101,12 +101,12 @@ Node<T>* SplayTree<T>::get_maximum(Node<T>* node) {
 
 
 template <class T>
-Node<T>* SplayTree<T>::search(T data) {
-    Node<T>* node = this->root;
+std::shared_ptr<Node<T>> SplayTree<T>::search(T data) {
+    std::shared_ptr<Node<T>> node = this->root;
     if (!node)
         return nullptr;
 
-    Node<T>* last_node;
+    std::shared_ptr<Node<T>> last_node;
     while (node) {
         last_node = node;
         if (node->data == data) {
@@ -126,9 +126,9 @@ Node<T>* SplayTree<T>::search(T data) {
 
 
 template <class T>
-void SplayTree<T>::insert(T data) {
-    Node<T>* node = this->root;
-    Node<T>* new_node = new Node<T>(data);
+bool SplayTree<T>::insert(T data) {
+    std::shared_ptr<Node<T>> node = this->root;
+    std::shared_ptr<Node<T>> new_node = std::make_shared<Node<T>>(data);
     while (node) {
         if (node->data < data) {
             if (node->right) {
@@ -147,20 +147,22 @@ void SplayTree<T>::insert(T data) {
                 break;
             }
         } else {
-            assert(false);
+            return false;
         }
     }
     this->splay(new_node);
+    return true;
 }
 
 template <class T>
-void SplayTree<T>::remove(T data) {
-    Node<T>* root = this->search(data);
-    assert(root == this->root);
-    Node<T>* left = root->left;
-    Node<T>* right = root->right;
+bool SplayTree<T>::remove(T data) {
+    std::shared_ptr<Node<T>> root = this->search(data);
+    if (!root) return false;
+
+    std::shared_ptr<Node<T>> left = root->left;
+    std::shared_ptr<Node<T>> right = root->right;
     if (left) {
-        Node<T>* left_max = this->get_maximum(left);
+        std::shared_ptr<Node<T>> left_max = this->get_maximum(left);
         this->splay(left_max);
         this->root->right = right;
         if (this->root->right)
@@ -169,13 +171,14 @@ void SplayTree<T>::remove(T data) {
         this->root = right;
         this->root->parent = nullptr;
     }
+    return true;
 }
 
 template <class T>
 std::vector<T> SplayTree<T>::in_order() {
-    Node<T>* node = this->root;
+    std::shared_ptr<Node<T>> node = this->root;
 
-    std::vector<Node<T>*> stack;
+    std::vector<std::shared_ptr<Node<T>>> stack;
     std::vector<T> order;
 
     while (node || stack.size() > 0) {
@@ -206,7 +209,7 @@ std::string SplayTree<T>::print() {
 }
 
 template <class T>
-std::string SplayTree<T>::print_helper(Node<T> *node, std::string prefix, bool is_right) {
+std::string SplayTree<T>::print_helper(std::shared_ptr<Node<T>> node, std::string prefix, bool is_right) {
     std::string res;
     res += prefix;
     res += (is_right ? "|---" : "L---" );
