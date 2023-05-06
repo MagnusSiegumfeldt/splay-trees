@@ -14,7 +14,7 @@ class Node {
     // Node<T>* parent = nullptr;
     // Node<T>* left = nullptr;
     // Node<T>* right = nullptr;
-    std::shared_ptr<Node<T>> parent;
+    std::weak_ptr<Node<T>> parent;
     std::shared_ptr<Node<T>> left;
     std::shared_ptr<Node<T>> right;
 

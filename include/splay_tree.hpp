@@ -9,21 +9,23 @@ Node<T>::Node(T data) {
 }
 template <class T>
 bool Node<T>::is_left_child() {
-    if (!this->parent)
+    std::shared_ptr<Node<T>> parent = this->parent.lock();
+    if (!parent)
         return false;
     return parent->left.get() == this;
 }
 template <class T>
 bool Node<T>::is_right_child() {
-    if (!this->parent)
+    std::shared_ptr<Node<T>> parent = this->parent.lock();
+    if (!parent)
         return false;
     return parent->right.get() == this;
 }
 
 template <class T>
 void SplayTree<T>::rotate_right(std::shared_ptr<Node<T>> x) {
-    std::shared_ptr<Node<T>> y = x->parent;
-    std::shared_ptr<Node<T>> z = y->parent;
+    std::shared_ptr<Node<T>> y = x->parent.lock();
+    std::shared_ptr<Node<T>> z = y->parent.lock();
 
     if (z) {
         if (y->is_left_child()) {
@@ -42,8 +44,8 @@ void SplayTree<T>::rotate_right(std::shared_ptr<Node<T>> x) {
 
 template <class T>
 void SplayTree<T>::rotate_left(std::shared_ptr<Node<T>> x) {
-    std::shared_ptr<Node<T>> y = x->parent;
-    std::shared_ptr<Node<T>> z = y->parent;
+    std::shared_ptr<Node<T>> y = x->parent.lock();
+    std::shared_ptr<Node<T>> z = y->parent.lock();
 
     if (z) {
         if (y->is_left_child()) {
@@ -62,30 +64,33 @@ void SplayTree<T>::rotate_left(std::shared_ptr<Node<T>> x) {
 
 template <class T>
 void SplayTree<T>::splay(std::shared_ptr<Node<T>> node) {
-    while (node->parent) {
-        if (!node->parent->parent) {
+    std::shared_ptr<Node<T>> parent = node->parent.lock();
+    while (parent) {
+        std::shared_ptr<Node<T>> grandparent = parent->parent.lock();
+        if (!grandparent) {
             if (node->is_right_child()) { // Zag
                 rotate_left(node);
             } else if (node->is_left_child()) { // Zig
                 rotate_right(node); 
             }
-        } else if (node->parent->is_left_child()) { 
+        } else if (parent->is_left_child()) { 
             if (node->is_left_child()) { // Zig-Zig
-                rotate_right(node->parent);
+                rotate_right(parent);
                 rotate_right(node);
             } else if (node->is_right_child()) { // Zag-Zig
                 rotate_left(node);
                 rotate_right(node);
             }
-        } else if (node->parent->is_right_child()) { 
+        } else if (parent->is_right_child()) { 
             if (node->is_right_child()) { // Zag-Zag
-                rotate_left(node->parent);
+                rotate_left(parent);
                 rotate_left(node);
             } else if (node->is_left_child()) { // Zig-Zag
                 rotate_right(node);
                 rotate_left(node);
             }
         }
+        parent = node->parent.lock();
     }
     this->root = node;
 }
@@ -169,7 +174,7 @@ bool SplayTree<T>::remove(T data) {
             this->root->right->parent = this->root;
     } else {
         this->root = right;
-        this->root->parent = nullptr;
+        this->root->parent.reset();
     }
     return true;
 }
@@ -225,3 +230,12 @@ std::string SplayTree<T>::print_helper(std::shared_ptr<Node<T>> node, std::strin
     res += print_helper(node->left, prefix + (is_right ? "|   " : "    "), false);
     return res;
 }
+
+
+
+
+
+
+
+
+
