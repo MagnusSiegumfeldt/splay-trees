@@ -18,7 +18,7 @@ cmake --build .
 ## Demo
 A small demo program is included. Execute 
 ```
-./build/Debug/main
+./build/main
 ```
 The following commands to stdin is supported:
 
@@ -35,6 +35,13 @@ Print the splay tree.
 print
 ```
 
+## Benchmarks
+The benchmarking code, can be executed using 
+```
+./build/test_runner
+```
+
+
 ## Tests
 A small set of tests is included, demonstrating basic functionality of the splay tree implementation. Catch2 is used as testing framework.
 
@@ -43,3 +50,4 @@ Run the tests by executing
 cd build
 ctest
 ```
+

@@ -17,6 +17,7 @@ test/test.cpp
 
 # Main target
 add_executable(main src/main.cpp)
+add_executable(test_runner src/test_runner.cpp)
 
 add_subdirectory(src/lib/Catch2)
 
